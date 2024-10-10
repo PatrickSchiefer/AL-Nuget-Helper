@@ -3,7 +3,8 @@
   "displayName": "AL Nuget Helper",
   "publisher": "PatrickSchiefer",
   "description": "",
-  "version": "0.0.1",
+  "repository": "https://github.com/PatrickSchiefer/AL-Nuget-Helper",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.93.0"
   },
