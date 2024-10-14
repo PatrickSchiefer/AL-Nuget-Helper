@@ -1,5 +1,12 @@
 # Change Log
 
+## 0.2.2
+- iterate through workspaces
+- create .alpackages if not exist
+
+## 0.2.1
+- Update Readme.md
+
 ## 0.2.0
 - use paket client instead of nuget cli
 - download system symbols
