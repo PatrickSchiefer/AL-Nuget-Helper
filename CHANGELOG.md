@@ -6,6 +6,7 @@
 - download application symbols
 - download plattform symbols
 - added description
+- added video to readme
 
 ## 0.1.0
 - Initial release
