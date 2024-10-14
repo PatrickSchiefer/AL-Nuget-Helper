@@ -2,9 +2,9 @@
   "name": "al-nuget-helper",
   "displayName": "AL Nuget Helper",
   "publisher": "PatrickSchiefer",
-  "description": "",
+  "description": "Provides a command to restore nuget packages in AL projects",
   "repository": "https://github.com/PatrickSchiefer/AL-Nuget-Helper",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "engines": {
     "vscode": "^1.93.0"
   },
