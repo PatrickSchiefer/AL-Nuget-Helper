@@ -14,42 +14,48 @@ let SystemSymbol = "Microsoft.SystemApplication.symbols.63ca2fa4-4f03-4f2b-a480-
 export function NugetRestoreAction() {
     DownloadPaketIfNotExists();
     if (vscode.workspace.workspaceFolders !== undefined) {
-        let appjsonpath = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, 'app.json');
+        for (let folder of vscode.workspace.workspaceFolders) {
+            ProcessWorkspaceFolder(folder.uri.fsPath);
+        }
+    }
+
+    function ProcessWorkspaceFolder(workingDirectory: string) {
+        let appjsonpath = path.join(workingDirectory, 'app.json');
         if (fs.existsSync(appjsonpath)) {
             fs.readFile(appjsonpath, async (err, data) => {
-                
+
                 if (vscode.workspace.workspaceFolders !== undefined) {
                     if (err) {
                         console.log(err);
                         return;
                     }
-                    var outputDirectory = path.join(vscode.workspace.workspaceFolders[0].uri.fsPath, '.alpackages');   
+                    var outputDirectory = path.join(workingDirectory, '.alpackages');
                     var paketDependencies = path.join(outputDirectory, 'paket.dependencies');
                     var appJsonRaw = data.toString();
+                    CreateFolderIfNotExists(outputDirectory);
+
                     console.log(appJsonRaw);
                     if (fs.existsSync(paketDependencies)) {
                         fs.rmSync(paketDependencies);
                     }
                     fs.writeFileSync(paketDependencies, 'strategy: min\r\n', { flag: 'w' });
-                    fs.writeFileSync(paketDependencies, 'lowest_matching: true\r\n', {flag: 'a'});
+                    fs.writeFileSync(paketDependencies, 'lowest_matching: true\r\n', { flag: 'a' });
                     fs.writeFileSync(paketDependencies, `source ${MSSymbols}\r\n`, { flag: 'a' });
                     fs.writeFileSync(paketDependencies, `source ${AppSourceSymbols}\r\n`, { flag: 'a' });
-                    
+
                     let appJson = JSON.parse(appJsonRaw);
-                    if (appJson.application)
-                    {
+                    if (appJson.application) {
                         fs.writeFileSync(paketDependencies, `nuget ${ApplicationSymbol} >= ${appJson.application}\r\n`, { flag: 'a' });
                     }
-                    if (appJson.platform)
-                    {
+                    if (appJson.platform) {
                         fs.writeFileSync(paketDependencies, `nuget ${PlattformSymbol} >= ${appJson.platform}\r\n`, { flag: 'a' });
                         fs.writeFileSync(paketDependencies, `nuget ${SystemSymbol} >= ${appJson.platform}\r\n`, { flag: 'a' });
                     }
                     if (appJson.dependencies.length > 0) {
                         for (let dep of appJson.dependencies) {
                             console.log(dep.name + ' ' + dep.version);
-                            var packageName =`${dep.publisher}.${dep.name}.symbols.${dep.id}`;
-                            packageName = packageName.replaceAll(' ', ''); 
+                            var packageName = `${dep.publisher}.${dep.name}.symbols.${dep.id}`;
+                            packageName = packageName.replaceAll(' ', '');
                             if (vscode.workspace.workspaceFolders !== undefined) {
                                 fs.writeFileSync(paketDependencies, `nuget ${packageName} >= ${dep.version}\r\n`, { flag: 'a' });
                                 console.log(dep.name);
@@ -88,4 +94,10 @@ export function GetPaketPath() {
         return path.join(`${os.tmpdir()}${path.sep}`, 'paket.exe');
     }
     return '';
+}
+
+export function CreateFolderIfNotExists(folderPath: string) {
+    if (!fs.existsSync(folderPath)) {
+        fs.mkdirSync(folderPath);
+    }
 }
