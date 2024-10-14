@@ -4,7 +4,7 @@ This is an extension for VSCode which provide a restore command for NuGet in AL 
 
 # Available Commands
 - AL Nuget Helper: restore
-![Screenshot of the command](https://raw.githubusercontent.com/PatrickSchiefer/AL-Nuget-Helper/refs/heads/main/media/downloadSymbols.gif)
+![Screenshot of the command](https://github.com/PatrickSchiefer/AL-Nuget-Helper/blob/main/media/RestoreCommand.png)
 Run command AL Nuget Helper, it will parse your app.json and download all dependencies, using the official Microsoft feeds
 
 
