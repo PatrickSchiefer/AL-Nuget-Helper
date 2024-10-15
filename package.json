@@ -4,7 +4,7 @@
   "publisher": "PatrickSchiefer",
   "description": "Provides a command to restore nuget packages in AL projects",
   "repository": "https://github.com/PatrickSchiefer/AL-Nuget-Helper",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "engines": {
     "vscode": "^1.93.0"
   },
@@ -14,6 +14,29 @@
   "activationEvents": [],
   "main": "./dist/extension.js",
   "contributes": {
+    "configuration":{
+        "title": "AL Nuget Helper",
+        "properties": {
+          "al-nuget-helper.countryCode": {
+            "type": "string",
+            "default": "",
+            "description": "Country code to use for localized AL app",
+            "scope": "resource" 
+          },
+          "al-nuget-helper.overwritePaketDependencies": {
+            "type": "boolean",
+            "default": true,
+            "description": "Overwrite file paket.dependencies if it already exists",
+            "scope": "resource" 
+          },
+          "al-nuget-helper.customPaketExecutablePath": {
+            "type": "string",
+            "default": "",
+            "description": "Path to custom paket executable",
+            "scope": "application" 
+          }
+        }
+      },
     "commands": [
       {
         "command": "al-nuget-helper.restore",

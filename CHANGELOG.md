@@ -1,4 +1,12 @@
-# Change Log
+# AL Nuget Helper Changelog 
+
+## 0.2.3
+- Add new workspace setting
+    - Country Code 
+    - Overwrite paket.dependencies
+- Add new global setting
+    - Custom paket executable path
+- Add log to VS Code Output Channel
 
 ## 0.2.2
 - iterate through workspaces
