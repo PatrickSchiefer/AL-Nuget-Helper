@@ -2,8 +2,12 @@ import path from 'path';
 import * as os from 'os';
 import fs = require('fs');
 import * as vscode from 'vscode';
+import { error } from 'console';
+import { PlattformUnsupportedError } from './errors';
 
+let ExtensionContext: vscode.ExtensionContext;
 export class Settings {
+   
    static CountryCode(workspaceFolder : vscode.WorkspaceFolder): string {
       return vscode.workspace.getConfiguration('al-nuget-helper', workspaceFolder).get('countryCode') || '';
    }
@@ -23,7 +27,7 @@ export class Settings {
       return `Microsoft.SystemApplication${Settings.GetCountryString(workspaceFolder)}.symbols.63ca2fa4-4f03-4f2b-a480-172fef340d3f`;
    }
 
-   static GetoverwritePaketDependencies(workspaceFolder : vscode.WorkspaceFolder): boolean {
+   static GetOverwritePaketDependencies(workspaceFolder : vscode.WorkspaceFolder): boolean {
       return vscode.workspace.getConfiguration('al-nuget-helper', workspaceFolder).get('overwritePaketDependencies', true);
    }
 
@@ -35,11 +39,20 @@ export class Settings {
       if (this.GetCustomPaketExecutablePath().length > 0) {
          return this.GetCustomPaketExecutablePath();
       }
-      var execPath = path.join(`${os.tmpdir()}${path.sep}`, 'AL-Nuget-Helper');
-      if (!fs.existsSync(execPath)) {
-         fs.mkdirSync(execPath);
+      //get extension path
+      let extensionPath = ExtensionContext.extensionPath;
+      if (os.platform() === 'win32') {
+         return path.join(extensionPath, 'tools', 'windows', 'paket.exe');
       }
-      return path.join(execPath, 'paket.exe');
+      else{
+         throw new PlattformUnsupportedError("Platform currently not natively supported, use setting customPaketExecutablePath to specify the path to the paket executable for your OS");
+      }
+  }
 
+  static SetExtensionContext(context: vscode.ExtensionContext) {
+      ExtensionContext = context;
+  }
+  static GetExtensionContext() : vscode.ExtensionContext {
+      return ExtensionContext;
   }
 }

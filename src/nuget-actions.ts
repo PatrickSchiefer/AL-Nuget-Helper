@@ -3,43 +3,71 @@ import * as path from 'path';
 import fs = require('fs');
 import * as ChildProcess from 'child_process';
 import { Settings } from './settings';
+import * as output from './output';
 
 let MSSymbols = "https://dynamicssmb2.pkgs.visualstudio.com/DynamicsBCPublicFeeds/_packaging/MSSymbols/nuget/v3/index.json";
 let AppSourceSymbols = "https://dynamicssmb2.pkgs.visualstudio.com/DynamicsBCPublicFeeds/_packaging/AppSourceSymbols/nuget/v3/index.json";
-let logOutputChannel = vscode.window.createOutputChannel('Nuget Restore');
+
 
 export function NugetRestoreAction() {
-    DownloadPaketIfNotExists();
-    if (vscode.workspace.workspaceFolders !== undefined) {
-        for (let folder of vscode.workspace.workspaceFolders) {
-            ProcessWorkspaceFolder(folder);
+    try {
+        output.clearOutput();
+        if (vscode.workspace.workspaceFolders !== undefined) {
+            for (let folder of vscode.workspace.workspaceFolders) {
+                ProcessWorkspaceFolder(folder);
+            }
         }
+    } catch (error: any) {
+        showErrorMessage(error.message);
     }
+}
 
-    function ProcessWorkspaceFolder(workspaceFolder: vscode.WorkspaceFolder) {
-        var workingDirectory = workspaceFolder.uri.fsPath; 
+
+function ProcessWorkspaceFolder(workspaceFolder: vscode.WorkspaceFolder) {
+    try {
+        var workingDirectory = workspaceFolder.uri.fsPath;
         let appjsonpath = path.join(workingDirectory, 'app.json');
+        let paketPath = Settings.GetPaketPath();
         if (fs.existsSync(appjsonpath)) {
             fs.readFile(appjsonpath, async (err, data) => {
+                try {
                     if (err) {
                         console.log(err);
-                        logOutputChannel.appendLine(err.toString());
+                        output.log(err.toString());
                         return;
                     }
                     var outputDirectory = path.join(workingDirectory, '.alpackages');
                     var paketDependencies = path.join(outputDirectory, 'paket.dependencies');
                     var appJsonRaw = data.toString();
-                    if (!fs.existsSync(paketDependencies) || Settings.GetoverwritePaketDependencies(workspaceFolder)) {
+                    if (!fs.existsSync(paketDependencies) || Settings.GetOverwritePaketDependencies(workspaceFolder)) {
                         WritePaketDependencies(outputDirectory, appJsonRaw, paketDependencies, workspaceFolder);
                     }
-                    var result = ChildProcess.execSync(`${Settings.GetPaketPath()} install `, { cwd: outputDirectory });
+                    var result = ChildProcess.execSync(`${paketPath} install `, { cwd: outputDirectory });
                     console.log(result.toString());
-                    logOutputChannel.appendLine(result.toString());
-                    logOutputChannel.show();
+                    output.log(result.toString());
+
+                } catch (error: any) {
+                    console.log(error);
+                    output.log(`Error in workspace folder ${workspaceFolder.name}`);
+                    output.log(error.toString());
+                    showErrorMessage(error.message);
                 }
-            );
+            });
         }
+    } catch (error: any) {
+        console.log(error);
+        output.log(`Error in workspace folder ${workspaceFolder.name}`);
+        output.log(error.toString());
+        throw error;
     }
+}
+function showErrorMessage(message: string) {
+    vscode.window.showErrorMessage(message,
+        'Create GitHub issue').then((action) => {
+            if (action === 'Create GitHub issue') {
+                vscode.env.openExternal(vscode.Uri.parse(`https://github.com/PatrickSchiefer/AL-Nuget-Helper/issues/new?body=${message}`));
+            }
+        });
 }
 
 function WritePaketDependencies(outputDirectory: string, appJsonRaw: string, paketDependencies: string, workspaceFolder: vscode.WorkspaceFolder) {
@@ -74,27 +102,6 @@ function WritePaketDependencies(outputDirectory: string, appJsonRaw: string, pak
                 fs.writeFileSync(paketDependencies, `nuget ${packageName} >= ${dep.version}\r\n`, { flag: 'a' });
                 console.log(dep.name);
             }
-        }
-    }
-}
-
-export function DownloadPaketIfNotExists() {
-    if (Settings.GetCustomPaketExecutablePath().length > 0) {
-        return;
-    }
-    if (vscode.workspace.workspaceFolders !== undefined) {
-        if (!fs.existsSync(Settings.GetPaketPath())) {
-            // Download nuget.exe
-            let file = fs.createWriteStream(Settings.GetPaketPath());
-            let url = 'https://github.com/fsprojects/Paket/releases/download/8.0.3/paket.exe';
-            let axios = require('axios');
-            axios({
-                method: 'get',
-                url: url,
-                responseType: 'stream'
-            }).then((response: any) => {
-                response.data.pipe(file);
-            });
         }
     }
 }
