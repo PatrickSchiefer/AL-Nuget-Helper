@@ -9,6 +9,9 @@
 - Add log to VS Code Output Channel
 - Added Documentation to readme
 - include paket.exe in extension instead of downloading it
+- added error handling 
+- Action for "Create GitHub Issue" on errors
+
 
 ## 0.2.2
 - iterate through workspaces
