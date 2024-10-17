@@ -45,7 +45,7 @@ export class Settings {
          return path.join(extensionPath, 'tools', 'windows', 'paket.exe');
       }
       else{
-         throw new PlattformUnsupportedError("Platform currently not natively supported, use setting customPaketExecutablePath to specify the path to the paket executable for your OS");
+         throw new PlattformUnsupportedError(`Platform ${os.platform()} currently not natively supported, use setting customPaketExecutablePath to specify the path to the paket executable for your OS`);
       }
   }
 
