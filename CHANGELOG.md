@@ -1,5 +1,9 @@
 # AL Nuget Helper Changelog 
 
+## 0.2.4
+- Ignore apps which are part of the workspace
+- Normalize app and publisher name
+
 ## 0.2.3
 - Add new workspace setting
     - Country Code 
@@ -11,7 +15,6 @@
 - include paket.exe in extension instead of downloading it
 - added error handling 
 - Action for "Create GitHub Issue" on errors
-
 
 ## 0.2.2
 - iterate through workspaces

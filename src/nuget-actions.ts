@@ -4,6 +4,7 @@ import fs = require('fs');
 import * as ChildProcess from 'child_process';
 import { Settings } from './settings';
 import * as output from './output';
+import { NormalizeText } from './helper';
 
 let MSSymbols = "https://dynamicssmb2.pkgs.visualstudio.com/DynamicsBCPublicFeeds/_packaging/MSSymbols/nuget/v3/index.json";
 let AppSourceSymbols = "https://dynamicssmb2.pkgs.visualstudio.com/DynamicsBCPublicFeeds/_packaging/AppSourceSymbols/nuget/v3/index.json";
@@ -96,9 +97,9 @@ function WritePaketDependencies(outputDirectory: string, appJsonRaw: string, pak
     if (appJson.dependencies.length > 0) {
         for (let dep of appJson.dependencies) {
             console.log(dep.name + ' ' + dep.version);
-            var packageName = `${dep.publisher}.${dep.name}.symbols.${dep.id}`;
+            var packageName = `${NormalizeText(dep.publisher)}.${NormalizeText(dep.name)}.symbols.${dep.id}`;
             packageName = packageName.replaceAll(' ', '');
-            if (vscode.workspace.workspaceFolders !== undefined) {
+            if (!AppExistsInWorkspaces(dep.id)) {
                 fs.writeFileSync(paketDependencies, `nuget ${packageName} >= ${dep.version}\r\n`, { flag: 'a' });
                 console.log(dep.name);
             }
@@ -106,6 +107,29 @@ function WritePaketDependencies(outputDirectory: string, appJsonRaw: string, pak
     }
 }
 
+export function AppExistsInWorkspaces(appID: string): boolean {
+    try {
+        if (vscode.workspace.workspaceFolders !== undefined) {
+            for (let folder of vscode.workspace.workspaceFolders) {
+                var workingDirectory = folder.uri.fsPath;
+                let appjsonpath = path.join(workingDirectory, 'app.json');
+                if (fs.existsSync(appjsonpath)) {
+                    var data = fs.readFileSync(appjsonpath);
+                    var appJsonRaw = data.toString();
+                    let appJson = JSON.parse(appJsonRaw);
+                    if (appJson.id === appID) {
+                        return true;
+                    }
+                }
+            }
+        }
+    } catch (error: any) {
+        console.log(error);
+        output.log(error.toString());
+        showErrorMessage(error.message);
+    }
+    return false;
+}
 
 export function CreateFolderIfNotExists(folderPath: string) {
     if (!fs.existsSync(folderPath)) {
