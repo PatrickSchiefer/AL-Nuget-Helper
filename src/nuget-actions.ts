@@ -4,7 +4,7 @@ import fs = require('fs');
 import * as ChildProcess from 'child_process';
 import { Settings } from './settings';
 import * as output from './output';
-import { NormalizeText } from './helper';
+import { NormalizeText, RemoveBOM } from './helper';
 
 let MSSymbols = "https://dynamicssmb2.pkgs.visualstudio.com/DynamicsBCPublicFeeds/_packaging/MSSymbols/nuget/v3/index.json";
 let AppSourceSymbols = "https://dynamicssmb2.pkgs.visualstudio.com/DynamicsBCPublicFeeds/_packaging/AppSourceSymbols/nuget/v3/index.json";
@@ -91,7 +91,7 @@ function WritePaketDependencies(outputDirectory: string, appJsonRaw: string, pak
     let ApplicationSymbol = Settings.GetApplicationSymbol(workspaceFolder);
     let PlattformSymbol = Settings.GetPlatformSymbol();
     let SystemSymbol = Settings.GetSystemSymbol(workspaceFolder);
-    let appJson = JSON.parse(appJsonRaw);
+    let appJson = JSON.parse(RemoveBOM(appJsonRaw));
     if (appJson.application) {
         fs.writeFileSync(paketDependencies, `nuget ${ApplicationSymbol} >= ${appJson.application}\r\n`, { flag: 'a' });
     }
@@ -120,7 +120,7 @@ export function AppExistsInWorkspaces(appID: string): boolean {
                 let appjsonpath = path.join(workingDirectory, 'app.json');
                 if (fs.existsSync(appjsonpath)) {
                     var data = fs.readFileSync(appjsonpath);
-                    var appJsonRaw = data.toString();
+                    var appJsonRaw = RemoveBOM(data.toString());
                     let appJson = JSON.parse(appJsonRaw);
                     if (appJson.id === appID) {
                         return true;

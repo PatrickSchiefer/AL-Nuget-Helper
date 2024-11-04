@@ -1,5 +1,9 @@
 # AL Nuget Helper Changelog 
 
+## 0.2.6
+- Add support for UTF8 with BOM
+- fix issue with normalizing appnames when they include ":" fixed
+
 ## 0.2.5
 - Add Linux support
 - Add button to reload window after download finished, to reload symbol cache
