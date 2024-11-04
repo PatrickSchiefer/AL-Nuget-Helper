@@ -18,6 +18,11 @@ export function NugetRestoreAction() {
                 ProcessWorkspaceFolder(folder);
             }
         }
+        vscode.window.showInformationMessage('Nuget restore completed. Reload window to refresh symbol cache!', 'Reload Window').then((action) => {
+                if (action === 'Reload Window') {
+                    vscode.commands.executeCommand('workbench.action.reloadWindow');
+                }
+            });
     } catch (error: any) {
         showErrorMessage(error.message);
     }

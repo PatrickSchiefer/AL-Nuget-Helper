@@ -44,6 +44,9 @@ export class Settings {
       if (os.platform() === 'win32') {
          return path.join(extensionPath, 'tools', 'windows', 'paket.exe');
       }
+      else if (os.platform() === 'linux') {
+         return "mono " + path.join(extensionPath, 'tools', 'windows', 'paket.exe');
+      }
       else{
          throw new PlattformUnsupportedError(`Platform ${os.platform()} currently not natively supported, use setting customPaketExecutablePath to specify the path to the paket executable for your OS`);
       }

@@ -1,5 +1,9 @@
 # AL Nuget Helper Changelog 
 
+## 0.2.5
+- Add Linux support
+- Add button to reload window after download finished, to reload symbol cache
+
 ## 0.2.4
 - Ignore apps which are part of the workspace
 - Normalize app and publisher name
