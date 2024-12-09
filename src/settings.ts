@@ -42,7 +42,7 @@ export class Settings {
       //get extension path
       let extensionPath = ExtensionContext.extensionPath;
       if (os.platform() === 'win32') {
-         return path.join(extensionPath, 'tools', 'paket', 'paket.exe');
+         return path.join(extensionPath, 'tools', 'paket.exe');
       }
       else if (os.platform() === 'linux') {
          return "dotnet " + path.join(extensionPath, 'tools', 'paket', 'paket.dll');
