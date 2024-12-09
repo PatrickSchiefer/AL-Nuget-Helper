@@ -42,10 +42,10 @@ export class Settings {
       //get extension path
       let extensionPath = ExtensionContext.extensionPath;
       if (os.platform() === 'win32') {
-         return path.join(extensionPath, 'tools', 'windows', 'paket.exe');
+         return path.join(extensionPath, 'tools', 'paket', 'paket.exe');
       }
       else if (os.platform() === 'linux') {
-         return "mono " + path.join(extensionPath, 'tools', 'windows', 'paket.exe');
+         return "dotnet " + path.join(extensionPath, 'tools', 'paket', 'paket.dll');
       }
       else{
          throw new PlattformUnsupportedError(`Platform ${os.platform()} currently not natively supported, use setting customPaketExecutablePath to specify the path to the paket executable for your OS`);

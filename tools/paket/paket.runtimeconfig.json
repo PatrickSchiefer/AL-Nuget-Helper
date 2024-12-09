@@ -1,0 +1,14 @@
+{
+  "runtimeOptions": {
+    "tfm": "netcoreapp3.1",
+    "framework": {
+      "name": "Microsoft.NETCore.App",
+      "version": "3.1.0"
+    },
+    "$schema": "https://gist.githubusercontent.com/natemcmaster/0bdee16450f8ec1823f2c11af880ceeb/raw/runtimeconfig.template.schema.json",
+    "rollForwardOnNoCandidateFx": 2,
+    "configProperties": {
+      "System.Reflection.Metadata.MetadataUpdater.IsSupported": false
+    }
+  }
+}

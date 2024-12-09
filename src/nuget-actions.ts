@@ -19,10 +19,10 @@ export function NugetRestoreAction() {
             }
         }
         vscode.window.showInformationMessage('Nuget restore completed. Reload window to refresh symbol cache!', 'Reload Window').then((action) => {
-                if (action === 'Reload Window') {
-                    vscode.commands.executeCommand('workbench.action.reloadWindow');
-                }
-            });
+            if (action === 'Reload Window') {
+                vscode.commands.executeCommand('workbench.action.reloadWindow');
+            }
+        });
     } catch (error: any) {
         showErrorMessage(error.message);
     }
@@ -35,30 +35,23 @@ function ProcessWorkspaceFolder(workspaceFolder: vscode.WorkspaceFolder) {
         let appjsonpath = path.join(workingDirectory, 'app.json');
         let paketPath = Settings.GetPaketPath();
         if (fs.existsSync(appjsonpath)) {
-            fs.readFile(appjsonpath, async (err, data) => {
-                try {
-                    if (err) {
-                        console.log(err);
-                        output.log(err.toString());
-                        return;
-                    }
-                    var outputDirectory = path.join(workingDirectory, '.alpackages');
-                    var paketDependencies = path.join(outputDirectory, 'paket.dependencies');
-                    var appJsonRaw = data.toString();
-                    if (!fs.existsSync(paketDependencies) || Settings.GetOverwritePaketDependencies(workspaceFolder)) {
-                        WritePaketDependencies(outputDirectory, appJsonRaw, paketDependencies, workspaceFolder);
-                    }
-                    var result = ChildProcess.execSync(`${paketPath} install `, { cwd: outputDirectory });
-                    console.log(result.toString());
-                    output.log(result.toString());
-
-                } catch (error: any) {
-                    console.log(error);
-                    output.log(`Error in workspace folder ${workspaceFolder.name}`);
-                    output.log(error.toString());
-                    showErrorMessage(error.message);
+            var data = fs.readFileSync(appjsonpath);
+            try {
+                var outputDirectory = path.join(workingDirectory, '.alpackages');
+                var paketDependencies = path.join(outputDirectory, 'paket.dependencies');
+                var appJsonRaw = data.toString();
+                if (!fs.existsSync(paketDependencies) || Settings.GetOverwritePaketDependencies(workspaceFolder)) {
+                    WritePaketDependencies(outputDirectory, appJsonRaw, paketDependencies, workspaceFolder);
                 }
-            });
+                var result = ChildProcess.execSync(`${paketPath} install `, { cwd: outputDirectory });
+                console.log(result.toString());
+                output.log(result.toString());
+            } catch (error: any) {
+                console.log(error);
+                output.log(`Error in workspace folder ${workspaceFolder.name}`);
+                output.log(error.toString());
+                showErrorMessage(error.message);
+            }
         }
     } catch (error: any) {
         console.log(error);
