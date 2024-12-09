@@ -1,5 +1,9 @@
 # AL Nuget Helper Changelog 
 
+## 0.3.0
+- fix timing problem when downloading packages
+- full linux support (including codespaces)
+
 ## 0.2.6
 - Add support for UTF8 with BOM
 - fix issue with normalizing appnames when they include ":" fixed
