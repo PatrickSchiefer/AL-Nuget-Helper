@@ -4,7 +4,8 @@
   "publisher": "PatrickSchiefer",
   "description": "Provides a command to restore nuget packages in AL projects",
   "repository": "https://github.com/PatrickSchiefer/AL-Nuget-Helper",
-  "version": "0.2.6",
+  "version": "0.2.7.1",
+  "preview": true,
   "icon": "media/AL-Nuget-Helper.png",
   "engines": {
     "vscode": "^1.93.0"
