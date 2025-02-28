@@ -1,5 +1,11 @@
 # AL Nuget Helper Changelog 
 
+## 0.3.2
+- fix issue when apps have '-' in there name
+
+## 0.3.1
+- fix windows binaries
+
 ## 0.3.0
 - fix timing problem when downloading packages
 - full linux support (including codespaces)
